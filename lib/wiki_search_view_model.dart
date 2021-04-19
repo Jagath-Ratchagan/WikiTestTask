@@ -17,15 +17,19 @@ class WikiSearchViewModel extends ChangeNotifier {
 
   bool hasConnection = true;
 
+  bool isLoading  = false;
+
   updateUi() {
     notifyListeners();
   }
 
   getResultForSearchQuery() async {
+
     DbHelper dbHelper = DbHelper.instance;
 
     hasConnection = await DataConnectionChecker().hasConnection;
-
+isLoading = true;
+notifyListeners();
     if (hasConnection) {
       ApiHelper()
           .getDataForSearchQueryFromWikiApi(searchController.text.toString(), 20)
@@ -43,6 +47,7 @@ class WikiSearchViewModel extends ChangeNotifier {
               desc: i.terms.description[0],
               pageId: i.pageid));
         }
+        isLoading = false;
         notifyListeners();
       });
     } else {
@@ -55,6 +60,7 @@ class WikiSearchViewModel extends ChangeNotifier {
             resultList.add(i);
           }
         }
+        isLoading = false;
         notifyListeners();
       });
     }
